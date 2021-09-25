@@ -16,10 +16,22 @@ public class GameplayManager {
         System.out.println(board);
     }
 
+    /**
+     * Plays a single turn of Chess and returns
+     */
     public void playTurn() {
         //FIXME
     }
 
+    /**
+     * If allowed, moves a piece from (xi, yi) to (xf, yf)
+     * NOTE: +y refers to top-to-bottom movement. +x refers to left-to-right movement
+     * @param xi Starting X position (0-7)
+     * @param yi Starting Y position (0-7)
+     * @param xf Destination X position (0-7)
+     * @param yf Destination Y position (0-7)
+     * @return True if the move is allowed and successful, false otherwise
+     */
     public boolean movePiece(int xi, int yi, int xf, int yf) {
         // Make sure the movement would not be out of bounds
         if (outOfBounds(xi, yi)) {
@@ -52,10 +64,23 @@ public class GameplayManager {
         return true;
     }
 
+    /**
+     * Checks if the given coordinates exist on the board
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @return True if the coordinates are out of bounds, false otherwise
+     */
     public boolean outOfBounds(int x, int y) {
         return !((x >= 0)&&(y >= 0) && (x < board.getSize())&&(y < board.getSize()));
     }
 
+    /**
+     * Checks which type of piece is trying to move and evaluates whether or not it can make said move.
+     * @param toMove Piece that we are trying to move
+     * @param xf Destination X coordinate
+     * @param yf Destination Y coordinate
+     * @return True if the move is allowed, false otherwise
+     */
     public boolean moveAllow(Piece toMove, int xf, int yf) {
         switch(toMove.getType()) {
             case 0:
@@ -102,7 +127,10 @@ public class GameplayManager {
         return board.getPiece(x, y);
     }
 
-    // Checks for pieces in the way of movement
+    /**
+     * Checks if the pawn specified is allowed to move/attack based on the current board state
+     * @return True if the movement is allowed, false otherwise
+     */
     public boolean pawnAllow(Piece pawn, int x, int y) {
         Piece target = getPiece(x, y);
         // The Pawn cannot attack in a straight line
@@ -110,13 +138,20 @@ public class GameplayManager {
             if (target.getType() != -1) {
                 return false;
             }
-        } else if (target.getType() == -1) {   // The Pawn cannot move diagonally unless attacking
+        } else if (target.getType() == -1) {   // The Pawn cannot move diagonally unless the destination is occupied (attacking)
             return false;
         }
         
         return true;
     }
 
+    /**
+     * Checks if a pawn is able to attack the target location.
+     * @param pawn
+     * @param x
+     * @param y
+     * @return True if the pawn can attack the destination, false otherwise
+     */
     public boolean pawnThreat(Piece pawn, int x, int y) {
         if (pawn.getPlayer() == 2) {
             return ((y == pawn.getYPos()-1)&&((x == pawn.getXPos()-1)||(x == pawn.getXPos()+1)));
@@ -126,6 +161,13 @@ public class GameplayManager {
         return false;
     }
 
+    /**
+     * 
+     * @param king
+     * @param x
+     * @param y
+     * @return True if the king specified is able to move to (x, y), false otherwise
+     */
     public boolean kingAllow(Piece king, int x, int y) {
         if (isDanger(x, y, king.getPlayer())) {
             return false;
@@ -133,6 +175,13 @@ public class GameplayManager {
         return true;
     }
 
+    /**
+     * Checks for any collisions with other pieces
+     * @param queen
+     * @param x
+     * @param y
+     * @return True if the queen specified is able to move to (x, y), false otherwise
+     */
     public boolean queenAllow(Piece queen, int x, int y) {
         if ((queen.getXPos() == x)||(queen.getYPos() == y)) {
             return rookAllow(queen, x, y);
@@ -140,6 +189,13 @@ public class GameplayManager {
         return bishopAllow(queen, x, y);
     }
 
+    /**
+     * Checks for any collisions with other pieces
+     * @param bishop
+     * @param x
+     * @param y
+     * @return True if the bishop specified is able to move to (x, y), false otherwise
+     */
     public boolean bishopAllow(Piece bishop, int x, int y) {
         if ((x > bishop.getXPos())&&(y > bishop.getYPos())) { // Moving top-left to bot-right
             for (int i = 1; i < x-bishop.getXPos(); i++) {
@@ -176,6 +232,13 @@ public class GameplayManager {
         return true;
     }
 
+    /**
+     * Checks for any collisions with other pieces
+     * @param rook
+     * @param x
+     * @param y
+     * @return True if the rook specified is able to move to (x, y), false otherwise
+     */
     public boolean rookAllow(Piece rook, int x, int y) {
         if (rook.getXPos()==x) { // Vertical movement
             if (rook.getYPos() > y) {
@@ -215,7 +278,9 @@ public class GameplayManager {
      * @return boolean true if the king is in check.
      */
     public boolean isCheck(int player) {
-        // FIXME: Better solution: add threatening boolean to Piece and just check this (and update threatening every move)
+        // TODO add threatening boolean to Piece and check this (and update threatening every move). 
+        // Then we only need to check every piece when a king is moved 
+        // (this might not be true in the case of a blocking piece moving out of the way, putting the king in check)
         if (player == 1) {
             if (isDanger(board.getBlackKing().getXPos(), board.getBlackKing().getYPos(), player)) {
                 return true;
@@ -274,6 +339,10 @@ public class GameplayManager {
         return false;
     }
 
+    /**
+     * Replaces the specified pawn with a queen
+     * @param pawn Pawn to be swapped with a queen
+     */
     public void pawnPromotion(Piece pawn) {
         // TODO
     }

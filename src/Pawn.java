@@ -17,7 +17,7 @@ public class Pawn extends Piece {
             if ((y == this.getYPos()-1) && (x >= this.getXPos()-1)&&(x <= this.getXPos()+1)) {
                 return true;
             }
-            if (!hasMoved()) {
+            if (!hasMoved()) { //FIXME Make sure the space between the pawn and the destination is not occupied
                 if ((y < this.getYPos())&&(y >= this.getYPos()-2) && (x == this.getXPos())) {
                     return true;
                 }
@@ -26,7 +26,7 @@ public class Pawn extends Piece {
             if ((y == this.getYPos()+1) && (x >= this.getXPos()-1)&&(x <= this.getXPos()+1)) {
                 return true;
             }
-            if (!hasMoved()) {
+            if (!hasMoved()) { //FIXME Make sure the space between the pawn and the destination is not occupied
                 if ((y > this.getYPos())&&(y <= this.getYPos()+2) && (x == this.getXPos())) {
                     return true;
                 }
